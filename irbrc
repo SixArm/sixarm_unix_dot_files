@@ -1,14 +1,3 @@
-##
-# IRB RC file for joelparkerhenderson@gmail.com
-#
-# This file uses these gems:
-#   sudo gem install dbi
-#   sudo gem install looksee
-#   sudo gem install wirble
-#
-# This file will require each of these gems,
-# and skip it if the gem doesn't exist.
-    
 script_console_running = ENV.include?('RAILS_ENV') && IRB.conf[:LOAD_MODULES] && IRB.conf[:LOAD_MODULES].include?('console_with_helpers')
 rails_running = ENV.include?('RAILS_ENV') && !(IRB.conf[:LOAD_MODULES] && IRB.conf[:LOAD_MODULES].include?('console_with_helpers'))
 irb_standalone_running = !script_console_running && !rails_running
@@ -20,32 +9,15 @@ end
 
 ####
 
+require 'irb/completion'
 require 'rubygems'
 require 'pp'
 require 'benchmark'
 require 'yaml'
-
-begin
- require 'irb/completion'
-rescue LoadError
-end
-
-begin
- require 'dbi'
-rescue LoadError
-end
-
-begin
- require 'looksee/shortcuts'
-rescue LoadError
-end
-
-begin
- require 'wirble'
- Wirble.init
- Wirble.colorize
-rescue LoadError
-end
+require 'dbi'
+require 'wirble'
+Wirble.init
+Wirble.colorize
 
 ####
 
