@@ -9,7 +9,7 @@
 	c = commit -m
 	co = checkout
 	d = diff
-   	dd = !git diff $1 | mate
+   	dd = !git diff $1 | edit
 	get = !git pull && git submodule update --init
 	l = log -p
 	s = status
