@@ -1,0 +1,86 @@
+
+###
+#
+#  Mutt & Maildir
+#   http://www.elho.net/mutt/maildir/
+#
+###
+
+## Mutt will use the Maildir format
+
+set mbox_type=Maildir
+
+
+## Next configure the locations of the common folders:
+
+set folder="~/Maildir"
+set mask="!^\\.[^.]"
+set mbox="~/Maildir"
+set record="+.sent"
+set postponed="+.drafts"
+set spoolfile="~/Maildir"
+
+
+## Set up mailboxes by scanning for all subfolders in ~/Maildir:
+
+mailboxes `echo -n "+ "; find ~/Maildir -maxdepth 1 -type d -name ".*" -printf "+'%f' "`
+
+
+## Add macros to make the folder browser usable 
+## by always using the mailboxes setup above:
+
+macro index c "<change-folder>?<toggle-mailboxes>" "open a different folder"
+macro pager c "<change-folder>?<toggle-mailboxes>" "open a different folder"
+
+
+## To additionally get straight to the folder browser
+## when copying, moving and attaching mail:
+
+macro index C "<copy-message>?<toggle-mailboxes>" "copy a message to a mailbox"
+macro index M "<save-message>?<toggle-mailboxes>" "move a message to a mailbox"
+
+macro compose A "<attach-message>?<toggle-mailboxes>" "attach message(s) to this message"
+
+
+###
+#
+#  Tab Completion Of Addresses
+#
+###
+
+## Aliases give you tab completion, e.g. in the To: field.
+## We won't use them here because we use 'abook' address book.
+
+#set alias_file=~/.mutt/aliases
+#set sort_alias= alias
+#set reverse_alias=yes
+#source $alias_file
+
+## Connect mutt to 'abook' address book,
+## so when you are in the To: field you can 
+## type something then press Tab to get results.
+
+bind editor <Tab> complete-query
+set query_command = "abook --mutt-query '%s'"
+macro generic,index,pager \ca "<shell-escape>abook<return>" "launch abook"
+macro index,pager A "<pipe-message>abook --add-email<return>" "add the sender address to abook"
+
+
+###
+#
+#  Misc
+#
+###
+
+
+## Show/Hide Headers
+
+ignore *
+unignore From: To: Reply-To: Cc: Subject: Date:
+
+
+## Edit with emacs client
+
+set editor=emacsclient
+
+
