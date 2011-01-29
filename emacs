@@ -42,6 +42,9 @@
 (global-font-lock-mode t)
 (setq font-lock-maximum-decoration t)
 
+;; Highlight whitespace glitches
+(highlight-tabs)    
+(highlight-trailing-whitespace)
 
 (setq comint-input-ring-size 1024)
 (iswitchb-mode t)
