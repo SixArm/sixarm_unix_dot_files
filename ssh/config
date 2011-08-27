@@ -1,0 +1,31 @@
+# SSH configuration
+
+# Speed up new connections by reusing an already existing connection.
+#
+# ControlMaster auto tells your ssh client to always use a ControlMaster on all hosts.
+# Or set it to autoask to have ssh prompt you for whether or not to reuse a connection.
+#
+# ControlPath tells ssh where it should keep its socket information.
+# I've chosen to put these files in /tmp, however it may be best
+# to put this into your own home directory on multi-user systems.
+#
+# To do ssh tunneling, you need to specify -o ControlMaster=no
+# otherwise multiple tunnels to a particular host will not work.
+# 
+# From: Quick-Tip: Reusing OpenSSH connections to the same host, by Frank Wiles
+# See: http://www.revsys.com/writings/quicktips/ssh-faster-connections.html
+
+Host *
+ControlMaster auto
+ControlPath /tmp/%r@%h:%p
+
+# Keep connections alive even on servers that try to close quickly.
+
+ServerAliveInterval 60
+ServerAliveCountMax 10
+
+# Example host shortcut
+
+Host jph
+Hostname joelparkerhenderson.com
+User joel
