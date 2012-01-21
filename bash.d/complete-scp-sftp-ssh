@@ -1,0 +1,5 @@
+# http://b.sricola.com/post/16174981053/bash-autocomplete-for-ssh
+complete -W "$(echo $(grep '^ssh ' .bash_history | sort -u | sed 's/^\(scp\|sftp\|ssh\) \([a-zA-Z0-9_-@]*\).*/\1/'))" scp sftp ssh
+
+# You can also use ssh aliases:
+# complete -o default -o nospace -W "$(/usr/bin/env ruby -ne 'puts $_.split(/[,\s]+/)[1..-1].reject{|host| host.match(/\*|\?/)} if $_.match(/^\s*Host\s+/);' < $HOME/.ssh/config)" scp sftp ssh
