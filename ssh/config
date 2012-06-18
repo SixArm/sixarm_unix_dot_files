@@ -11,13 +11,17 @@
 #
 # To do ssh tunneling, you need to specify -o ControlMaster=no
 # otherwise multiple tunnels to a particular host will not work.
-# 
+#
 # From: Quick-Tip: Reusing OpenSSH connections to the same host, by Frank Wiles
 # See: http://www.revsys.com/writings/quicktips/ssh-faster-connections.html
 
 Host *
+
+# Speed up connections by reuse
+
 ControlMaster auto
-ControlPath /tmp/%r@%h:%p
+ControlPath ~/.ssh/master-%r@%h:%p
+ControlPersist 4h
 
 # Keep connections alive even on servers that try to close quickly.
 
@@ -29,3 +33,4 @@ ServerAliveCountMax 10
 Host jph
 Hostname joelparkerhenderson.com
 User joel
+
