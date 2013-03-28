@@ -1,0 +1,163 @@
+### 
+# IRB RC
+#
+# Thanks to http://rakeroutes.com/blog/customize-your-irb/
+##
+
+### Configure IRB
+
+# Prompt mode simple just makes prompts look like >> instead of 1.9.3p327 :001 >
+IRB.conf[:PROMPT_MODE] = :SIMPLE
+
+# Configure IRB history to use many lines
+IRB.conf[:EVAL_HISTORY] = 5000
+IRB.conf[:SAVE_HISTORY] = 5000
+IRB.conf[:HISTORY_FILE] = File::expand_path("~/.irb_history_file")
+
+IRB.conf[:AUTO_INDENT] = true
+IRB.conf[:USE_READLINE] = true
+
+### Gems
+
+# Ruby 1.8.7 compatible
+require 'rubygems'
+require 'irb/completion'
+
+# Interactive Editor: enables us to use vim (or our favorite editor)
+# to edit files and have them run within the context of the irb session
+# and to edit objects’ YAML representation.
+require 'interactive_editor'
+
+require 'pp'
+require 'benchmark'
+require 'yaml'
+require 'dbi'
+
+begin
+  require 'wirble'
+  Wirble.init
+  Wirble.colorize
+rescue LoadError => err
+  warn "Can't load wirble: #{err}"
+end
+
+# Awesome Print: pretty print Ruby objects in color and with nice formatting
+# to show their structure. The .irb! call hooks it into irb as the default 
+# formatter so you don’t even need to call it directly; it just happens.
+begin
+  require 'awesome_print'
+  AwesomePrint.irb!
+rescue LoadError => err
+  warn "Can't load awesome_print: #{err}"
+end
+
+
+
+### Load extras
+
+%q'extensions rails samples'.each{|path|
+  p = File.expand_path('~/.irbrc.d/#{path}')
+  load p if File.exist?(p) 
+}
+
+
+###
+
+# From http://pastie.org/179534
+
+# Quick benchmarking
+def quick(repetitions=10, *blocks)
+  require 'benchmark'
+
+  Benchmark.bmbm {|b|
+    blocks.each {|block|
+      b.report {repetitions.times &block} 
+    }  
+  }
+  nil
+end
+
+# RI access
+def ri(obj = '')
+  puts `ri #{obj}`
+end  
+
+def reset_irb()
+  exec $0
+end
+
+
+####
+
+# IRB RI fast completion
+# http://eigenclass.org/hiki/irb+ri+completion
+
+require 'irb/completion'
+
+module Kernel
+  def r(arg)
+    puts `fri "#{arg}"`
+  end
+  private :r
+end
+
+
+RICompletionProc = proc{|input|
+  bind = IRB.conf[:MAIN_CONTEXT].workspace.binding
+  case input
+  when /(\s*(.*)\.ri_)(.*)/
+    pre = $1
+    receiver = $2
+    meth = $3 ? /\A#{Regexp.quote($3)}/ : /./ #}
+    begin
+      candidates = eval("#{receiver}.methods", bind).map do |m|
+        case m
+        when /[A-Za-z_]/; m
+        else # needs escaping
+          %{"#{m}"}
+        end
+      end
+      candidates = candidates.grep(meth)
+      candidates.map{|s| pre + s }
+    rescue Exception
+      candidates = []
+    end
+  when /([A-Z]\w+)#(\w*)/ #}
+    klass = $1
+    meth = $2 ? /\A#{Regexp.quote($2)}/ : /./
+    candidates = eval("#{klass}.instance_methods(false)", bind)
+    candidates = candidates.grep(meth)
+    candidates.map{|s| "'" + klass + '#' + s + "'"}
+  else
+    IRB::InputCompletor::CompletionProc.call(input)
+  end
+}
+#Readline.basic_word_break_characters= " \t\n\"\\'`><=;|&{("
+Readline.basic_word_break_characters= " \t\n\\><=;|&"
+Readline.completion_proc = RICompletionProc
+
+
+### Rails
+
+rails = ENV.include?('RAILS_ENV') || defined? Rails
+rails_script_console_running = rails && IRB.conf[:LOAD_MODULES] && IRB.conf[:LOAD_MODULES].include?('console_with_helpers')
+rails_running = rails && !(IRB.conf[:LOAD_MODULES] && IRB.conf[:LOAD_MODULES].include?('console_with_helpers'))
+irb_standalone_running = !script_console_running && !rails_running
+
+if rails_script_console_running
+  require 'logger'
+  Object.const_set(:RAILS_DEFAULT_LOGGER, Logger.new(STDOUT))
+end
+
+
+# Optionally load .irbrc_rails in rails environments
+path = File.expand_path('~/.irbrc_rails')
+if ( ENV['RAILS_ENV'] || defined? Rails ) && File.exist?( path )
+  begin
+    load path
+  rescue Exception
+    warn "Can't load: #{path} because of #{$!.message}"
+  end
+end
+
+###
