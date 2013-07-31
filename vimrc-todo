@@ -1,0 +1,153 @@
+" Vimrc todo. This file has commands and settings that we want to learn more about.
+"
+
+set completeopt=menu,longest,preview " more autocomplete <Ctrl>-P options
+set nostartofline               " leave my cursor position alone!
+set backspace=2                 " equiv to :set backspace=indent,eol,start
+
+"  * filler: show filler lines, to keep the text synchronized with a window
+     that has inserted lines at the same position.  Mostly useful when 
+     windows are side-by-side and 'scrollbind' is set.
+
+" Ignore all whitespace and sync.
+set diffopt=filler,iwhite     
+
+" The semi-colon is a rarely used command, whereas colon is a common command
+" and used to enter command-line mode. Remapping the semi-colon to colon enables
+" use to enter command-line mode without hitting the shift key, thus saving the
+" muscles in our little fingers. – William Pursell on Stack Overflow
+  nore ; :
+nore , ;
+
+if has("autocmd")
+  filetype plugin indent on
+
+
+set backspace=indent,eol,start
+
+set undolevels=1000           " 1000 undos
+set updatecount=100           " switch every 100 chars
+set complete=.,w,b,u,U,t,i,d  " do lots of scanning on tab completion
+set ttyfast                   " we have a fast terminal
+
+set shell=bash
+set fileformats=unix
+set ff=unix
+let maplocalleader=','        " all my macros start with ,
+set laststatus=2
+
+set viminfo=%100,'100,/100,h,\"500,:100,n~/.viminfo
+"set viminfo='100,f1
+
+" spelling
+if v:version >= 700
+  " Enable spell check for text files
+  autocmd BufNewFile,BufRead *.txt setlocal spell spelllang=en
+endif
+
+" mappings
+" toggle list mode
+nmap <LocalLeader>tl :set list!<cr>
+" toggle paste mode
+nmap <LocalLeader>pp :set paste!<cr>
+
+
+" The GUI (i.e. the 'g' in 'gvim') is fantastic, but let's not be
+" silly about it :)  The GUI is fantastic, but it's fantastic for
+" its fonts and its colours, not for its toolbar and its menus -
+" those just steal screen real estate
+set guioptions=ac
+
+" This is the timeout used while waiting for user input on a
+" multi-keyed macro or while just sitting and waiting for another
+" key to be pressed measured in milliseconds.
+"
+" i.e. for the ",d" command, there is a "timeoutlen" wait
+"      period between the "," key and the "d" key.  If the
+"      "d" key isn't pressed before the timeout expires,
+"      one of two things happens: The "," command is executed
+"      if there is one (which there isn't) or the command aborts.
+"
+" The idea here is that if you have two commands, say ",dv" and
+" ",d" that it will take 'timeoutlen' milliseconds to recognize
+" that you're going for ",d" instead of ",dv"
+"
+" In general you should endeavour to avoid that type of
+" situation because waiting 'timeoutlen' milliseconds is
+" like an eternity.
+set timeoutlen=500
+
+
+" These commands open folds
+set foldopen=block,insert,jump,mark,percent,quickfix,search,tag,undo
+
+" When the page starts to scroll, keep the cursor 8 lines from
+" the top and 8 lines from the bottom
+set scrolloff=8
+
+" Allow the cursor to go in to "invalid" places
+set virtualedit=all
+
+
+"------ Indents and tabs ------"
+
+set autoindent                  " set the cursor at same indent as line above
+set smartindent                 " try to be smart about indenting (C-style)
+set expandtab                   " expand <Tab>s with spaces; death to tabs!
+set shiftwidth=4                " spaces for each step of (auto)indent
+set softtabstop=4               " set virtual tab stop (compat for 8-wide tabs)
+set tabstop=8                   " for proper display of files with tabs
+set shiftround                  " always round indents to multiple of shiftwidth
+set copyindent                  " use existing indents for new indents
+set preserveindent              " save as much indent structure as possible
+filetype plugin indent on       " load filetype plugins and indent settings
+
+
+""" Emacs keybindings
+
+" first move the window command because we'll be taking it over
+noremap <C-x> <C-w>
+" Movement left/right
+noremap! <C-b> <Left>
+noremap! <C-f> <Right>
+" word left/right
+noremap  <M-b> b
+noremap! <M-b> <C-o>b
+noremap  <M-f> w
+noremap! <M-f> <C-o>w
+" line start/end
+noremap  <C-a> ^
+noremap! <C-a> <Esc>I
+noremap  <C-e> $
+noremap! <C-e> <Esc>A
+" Rubout word / line and enter insert mode
+noremap  <C-w> i<C-w>
+noremap  <C-u> i<C-u>
+" Forward delete char / word / line and enter insert mode
+noremap! <C-d> <C-o>x
+noremap  <M-d> dw
+noremap! <M-d> <C-o>dw
+noremap  <C-k> Da
+noremap! <C-k> <C-o>D
+" Undo / Redo and enter normal mode
+noremap  <C-_> u
+noremap! <C-_> <C-o>u<Esc><Right>
+noremap! <C-r> <C-o><C-r><Esc>
+
+" Remap <C-space> to word completion
+noremap! <Nul> <C-n>
+
+" OS X paste (pretty poor implementation)
+if has('mac')
+    noremap  √ :r!pbpaste<CR>
+    noremap! √ <Esc>√
+endif
+
+""" screen.vim REPL: http://github.com/ervandew/vimfiles
+" send paragraph to parallel process
+vmap <C-c><C-c> :ScreenSend<CR>
+nmap <C-c><C-c> mCvip<C-c><C-c>`C
+imap <C-c><C-c> <Esc><C-c><C-c><Right>
+" set shell region height
+let g:ScreenShellHeight = 12
+
