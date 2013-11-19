@@ -1,0 +1,4 @@
+# Session setup for xterm
+
+# Turn off bell alert
+xset b off
