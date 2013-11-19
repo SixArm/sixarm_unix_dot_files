@@ -1,29 +1,63 @@
+# Credits:
+# http://www.mindfuzz.net/?p=178
+
+# Make it use C-a, similar to screen..
+unbind C-b
+unbind l
+set -g prefix C-a
+bind-key C-a last-window
+ 
+# Reload key
+bind r source-file ~/.tmux.conf
+ 
+set -g history-limit 1000
+ 
+# set correct term
+set -g default-terminal screen-256color
+
 # Credit: http://tofu.org/drupal/node/182
 
 #--References-------------------------------------------------------------------
 # <a href="http://blog.hawkhost.com/2010/07/02/tmux-%E2%80%93-the-terminal-multiplexer-part-2/" title="http://blog.hawkhost.com/2010/07/02/tmux-%E2%80%93-the-terminal-multiplexer-part-2/">http://blog.hawkhost.com/2010/07/02/tmux-%E2%80%93-the-terminal-multiple...</a>
 # <a href="https://wiki.archlinux.org/index.php/Tmux" title="https://wiki.archlinux.org/index.php/Tmux">https://wiki.archlinux.org/index.php/Tmux</a>
  
-#--Key-Bindings-----------------------------------------------------------------
+# Split window
 bind | split-window -h
 bind _ split-window -v
+
+# Select pane similar to vi keybindings
 bind h select-pane -L
 bind j select-pane -D
 bind k select-pane -U
-# l is for last window by default. i'm used to that, but somewhat conflicted
-#bind l select-pane -R
+bind l select-pane -R
  
-#--Status-Bar-------------------------------------------------------------------
+
+### Status Bar
+
 # Default colors
 set -g status-bg black
 set -g status-fg white
- 
-# Status bar, left side
-set -g status-left-length 20
-set -g status-left '#[fg=green][#[bg=black,fg=cyan]#S#[bg=black,fg=blue,dim]:#H#[fg=green]]'
 
-# Status bar right side
-#set -g status-right '#[fg=yellow]#(date)'
+
+set -g status-interval 60
+
+# Status bar, left side, two suggestions:
+#
+#    set -g status-left-length 30
+#    set -g status-left '#[fg=green](#S) #(whoami)@#H#[default]'
+#
+#   set -g status-left-length 20
+#   set -g status-left '#[fg=green][#[bg=black,fg=cyan]#S#[bg=black,fg=blue,dim]:#H#[fg=green]]'
+#
+set -g status-left-length 30
+set -g status-left '#[fg=green](#S) #(whoami)@#H#[default]'
+ 
+
+# Status bar, right side, two suggestions:
+#
+#     set -g status-right '#[fg=yellow]#(date)'
+#     set -g status-right '#[fg=green][#[fg=white]#T#[fg=green]][#[fg=blue]%Y-%m-%d #[fg=white]%H:%M#[default]#[fg=green]]'
+#
 set -g status-right '#[fg=green][#[fg=white]#T#[fg=green]][#[fg=blue]%Y-%m-%d #[fg=white]%H:%M#[default]#[fg=green]]'
  
 # Inactive windows in status bar
@@ -37,7 +71,6 @@ set-window-option -g window-status-current-format '#[bg=blue,fg=cyan,bold]#I#[bg
 # Alerted window in status bar. Windows which have an alert (bell, activity or content).
 set-window-option -g window-status-alert-fg red
 set-window-option -g window-status-alert-bg white
- 
  
 #--Usability--------------------------------------------------------------------
 #set-option -g status-keys vi
