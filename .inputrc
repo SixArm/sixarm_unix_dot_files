@@ -1,0 +1,4 @@
+# Bash input
+
+# Turn off bell alert
+set bell-style none
